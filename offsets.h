@@ -1,0 +1,122 @@
+﻿#pragma once
+#include <Windows.h>
+#include <cstdint>
+
+struct Offsets {
+    // client.dll Offsets
+    struct {
+        uintptr_t dwEntityList = 0x27151E8;
+        uintptr_t dwViewAngles = 0x2576238;
+        uintptr_t dwViewMatrix = 0x2565A20;
+        uintptr_t dwViewRender = 0x25662E0;
+        uintptr_t dwLocalPlayerPawn = 0x25606D8;
+        uintptr_t dwLocalPlayerController = 0x2537628;
+        uintptr_t dwGlobalVars = 0x222BF88;
+        uintptr_t dwPlantedC4 = 0x24C9290;
+        uintptr_t dwWeaponC4 = 0x24C4550;
+    } client;
+
+    // Entity & Pawn
+    struct {
+        uintptr_t m_iTeamNum = 0x3E7;       // uint8
+        uintptr_t m_pGameSceneNode = 0x330; // CGameSceneNode*
+        uintptr_t m_iHealth = 0x34C;        // int32
+        uintptr_t m_hOwnerEntity = 0x520;   // CHandle<C_BaseEntity>
+    } C_BaseEntity;
+
+    struct {
+        uintptr_t m_vecAbsOrigin = 0xC8;    // VectorWS
+        uintptr_t m_bDormant = 0x103;      // bool
+    } CGameSceneNode;
+
+    struct {
+        uintptr_t m_modelState = 0x140;     // CModelState
+    } CSkeletonInstance;
+
+    // Controllers
+    struct {
+        uintptr_t m_hPlayerPawn = 0x92C;           // CHandle<C_CSPlayerPawn>
+        uintptr_t m_hPawn = 0x6BC;                 // CHandle<C_CSPlayerPawnBase>
+        uintptr_t m_sSanitizedPlayerName = 0x878;  // CUtlString
+        uintptr_t m_hObserverPawn = 0x930;         // CHandle<C_CSObserverPawn>
+        uintptr_t m_iObserverMode = 0x48;          // uint8
+    } CCSPlayerController;
+
+    struct {
+        uintptr_t m_pObserverServices = 0x1308;    // CPlayer_ObserverServices*
+    } C_BasePlayerPawn;
+
+    struct {
+        uintptr_t m_hObserverTarget = 0x4C;        // CHandle<C_BaseEntity>
+    } CPlayer_ObserverServices;
+
+    struct {
+        uintptr_t m_bIsScoped = 0x1EA0;            // bool
+        uintptr_t m_entitySpottedState = 0x1E88;   // EntitySpottedState_t
+        uintptr_t m_iIDEntIndex = 0x36CC;          // CEntityIndex
+        uintptr_t m_iShotsFired = 0x1EB4;          // int32
+        uintptr_t m_pAimPunchServices = 0x1598;    // CCSPlayer_AimPunchServices*
+    } C_CSPlayerPawn;
+
+    struct {
+        uintptr_t m_vecViewOffset = 0xF60;         // CNetworkViewOffsetVector
+    } C_BaseModelEntity;
+
+    struct {
+        uintptr_t m_pWeaponServices = 0x12F0;      // CPlayer_WeaponServices*
+        uintptr_t m_flFlashDuration = 0x1510;      // float32
+    } C_CSPlayerPawnBase;
+
+    struct {
+        uintptr_t m_hActiveWeapon = 0x60;          // CHandle<C_BasePlayerWeapon>
+        uintptr_t m_hMyWeapons = 0x48;             // C_NetworkUtlVectorBase<CHandle<C_BasePlayerWeapon>>
+    } CPlayer_WeaponServices;
+
+    struct {
+        uintptr_t m_AttributeManager = 0x1290;     // C_AttributeContainer
+    } C_EconEntity;
+
+    struct {
+        uintptr_t m_Item = 0x50;                   // C_EconItemView
+    } C_AttributeContainer;
+
+    struct {
+        uintptr_t m_iItemDefinitionIndex = 0x1BA;  // uint16
+    } C_EconItemView;
+
+    struct {
+        uintptr_t m_predictableBaseAngle = 0x50;   // QAngle
+    } CCSPlayer_AimPunchServices;
+
+    struct {
+        uintptr_t m_bSpotted = 0x8;                // bool
+        uintptr_t m_bSpottedByMask = 0xC;          // uint32[2]
+    } EntitySpottedState_t;
+
+    struct {
+        uintptr_t m_pEntity = 0x10;                // CEntityIdentity*
+    } CEntityInstance;
+
+    struct {
+        uintptr_t m_designerName = 0x20;           // CUtlSymbolLarge
+    } CEntityIdentity;
+
+    // Bomb / C4
+    struct {
+        uintptr_t m_bBombTicking = 0x1288;         // bool
+        uintptr_t m_bBeingDefused = 0x12C4;        // bool
+        uintptr_t m_flDefuseCountDown = 0x12D8;    // GameTime_t
+        uintptr_t m_nBombSite = 0x128C;            // int32
+        uintptr_t m_flC4Blow = 0x12B8;             // GameTime_t
+    } C4;
+
+    static uintptr_t get_client_base() {
+        static uintptr_t client_base = 0;
+        if (!client_base) {
+            client_base = reinterpret_cast<uintptr_t>(GetModuleHandleA("client.dll"));
+        }
+        return client_base;
+    }
+};
+
+inline Offsets g_offsets;
